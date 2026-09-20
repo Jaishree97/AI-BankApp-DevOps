@@ -25,6 +25,8 @@ kind: Service
 metadata:
   name: bankapp-service
   namespace: bankapp
+  labels:
+    app: bankapp
 spec:
   type: ClusterIP
   sessionAffinity: ClientIP
