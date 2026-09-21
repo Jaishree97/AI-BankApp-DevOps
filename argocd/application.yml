@@ -15,14 +15,6 @@ spec:
     server: https://kubernetes.default.svc
     namespace: bankapp
 
-  ignoreDifferences:
-    - group: apps
-      kind: Deployment
-      name: bankapp
-      namespace: bankapp
-      jsonPointers:
-        - /spec/replicas
-
   syncPolicy:
     automated:
       prune: true
@@ -30,4 +22,3 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
-      - RespectIgnoreDifferences=true
