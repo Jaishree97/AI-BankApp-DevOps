@@ -34,7 +34,7 @@ spec:
     - name: https
       protocol: HTTPS
       port: 443
-      hostname: 54.148.150.139.nip.io
+      hostname: 35.155.38.102.nip.io
       tls:
         mode: Terminate
         certificateRefs:
@@ -54,7 +54,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "2"
 spec:
   hostnames:
-    - 54.148.150.139.nip.io
+    - 35.155.38.102.nip.io
   parentRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
