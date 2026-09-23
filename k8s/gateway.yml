@@ -5,6 +5,8 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
 metadata:
   name: envoy-gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
 ---
@@ -13,8 +15,9 @@ kind: Gateway
 metadata:
   name: bankapp-gateway
   namespace: bankapp
-  # annotations:
-  #   cert-manager.io/cluster-issuer: letsencrypt-prod
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   gatewayClassName: envoy-gateway
   listeners:
@@ -24,38 +27,39 @@ spec:
     - name: http
       protocol: HTTP
       port: 80
-      # hostname: 54.148.150.139.nip.io
       allowedRoutes:
         namespaces:
           from: All
     # HTTPS — TLS terminated at Envoy Gateway using cert-manager certificate
-    # - name: https
-    #   protocol: HTTPS
-    #   port: 443
-    #   # hostname: 54.148.150.139.nip.io
-    #   tls:
-    #     mode: Terminate
-    #     certificateRefs:
-    #       - group: ""
-    #         kind: Secret
-    #         name: bankapp-tls
-    #   allowedRoutes:
-    #     namespaces:
-    #       from: Same
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: 54.148.150.139.nip.io
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: bankapp-tls
+      allowedRoutes:
+        namespaces:
+          from: Same
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: bankapp-route
   namespace: bankapp
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
-  # hostnames:
-    #- 54.148.150.139.nip.io
+  hostnames:
+    - 54.148.150.139.nip.io
   parentRefs:
-  #  - group: gateway.networking.k8s.io
-  #    kind: Gateway
-  #    name: bankapp-gateway
-  #    sectionName: https
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: bankapp-gateway
+      sectionName: https
     - group: gateway.networking.k8s.io
       kind: Gateway
       name: bankapp-gateway
@@ -81,6 +85,8 @@ kind: BackendTrafficPolicy
 metadata:
   name: bankapp-session
   namespace: bankapp
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   targetRefs:
     - group: gateway.networking.k8s.io
@@ -92,8 +98,7 @@ spec:
       type: Cookie
       cookie:
         name: BANKAPP_AFFINITY
-        ttl: 3600s
-           
+        ttl: 3600s         
   timeout:
     http:
       requestTimeout: 120s

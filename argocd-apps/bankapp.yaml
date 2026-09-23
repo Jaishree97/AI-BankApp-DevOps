@@ -6,7 +6,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: bankapp-team
+  project: default
   source:
     repoURL: https://github.com/Jaishree97/AI-BankApp-DevOps.git
     targetRevision: feat/gitops
